@@ -16,7 +16,7 @@ export default function ProfileView() {
       setError('Invalid profile ID');
       return;
     }
-    const url = API_BASE.startsWith('http') ? `${API_BASE}/profiles/${id}` : `/api/profiles/${id}`;
+    const url = API_BASE.startsWith('http') ? `${API_BASE}/api/profiles/${id}` : `/api/profiles/${id}`;
     fetch(url)
       .then((res) => {
         if (res.status === 404) throw new Error('not_found');
