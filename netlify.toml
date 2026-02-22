@@ -1,11 +1,4 @@
-
-netlify.toml
 [build]
-  # If your site is in a subfolder, specify it here (otherwise comment out)
-  base = "frontend"
-  
-  # The folder that contains your final built files
-  publish = "frontend/dist"  # or "frontend/build", "frontend/public", etc.
-  
-  # Your build command
-  command = "npm run build"  # or "yarn build"
+base = "frontend"
+publish = "dist"
+command = "npm run build"
