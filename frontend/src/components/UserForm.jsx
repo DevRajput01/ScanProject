@@ -44,9 +44,22 @@ export default function UserForm() {
       }
       if (data.id) navigate(`/qr/${data.id}`);
       else setError('Invalid response from server.');
-    } catch (err) {
-      setError('Network error. Is the backend running on port 5000?');
-    } finally {
+    }
+    // } catch (err) {
+    //   setError('Network error. Is the backend running on port 5000?');
+    // } finally {
+    catch (err) {
+  console.error('=== NETWORK ERROR DETAILS ===');
+  console.error('Error object:', err);
+  console.error('Error message:', err.message);
+  console.error('API_BASE value:', API_BASE);
+  console.error('URL that failed:', url);
+  console.error('Request method: POST');
+  console.error('Request headers:', { 'Content-Type': 'application/json' });
+  console.error('Request body:', JSON.stringify(form));
+  
+  setError(`Network error: ${err.message}. Check console for details.`);
+} finally {
       setLoading(false);
     }
   };
