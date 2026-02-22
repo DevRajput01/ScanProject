@@ -25,41 +25,98 @@ export default function UserForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
     if (!form.name.trim()) {
       setError('Name is required.');
       return;
     }
+    
     setLoading(true);
+    
+    // Declare url variable outside try block
+    let url;
+    
     try {
-      const url = API_BASE.startsWith('http') ? `${API_BASE}/api/profiles` : '/api/profiles';
+      // Construct the URL correctly
+      url = API_BASE.startsWith('http') 
+        ? `${API_BASE}/api/profiles` 
+        : '/api/profiles';
+      
+      console.log('=== REQUEST DETAILS ===');
+      console.log('API_BASE:', API_BASE);
+      console.log('Full URL:', url);
+      console.log('Form data:', form);
+      
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(form),
       });
-      const data = await res.json().catch(() => ({}));
+      
+      console.log('Response status:', res.status);
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
+      
+      // Try to parse the response
+      let data;
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.log('Non-JSON response:', text);
+        throw new Error('Server returned non-JSON response');
+      }
+      
+      console.log('Response data:', data);
+      
       if (!res.ok) {
-        setError(data.error || 'Failed to create profile.');
+        setError(data.error || `Server error: ${res.status}`);
         return;
       }
-      if (data.id) navigate(`/qr/${data.id}`);
-      else setError('Invalid response from server.');
-    }
-    // } catch (err) {
-    //   setError('Network error. Is the backend running on port 5000?');
-    // } finally {
-    catch (err) {
-  console.error('=== NETWORK ERROR DETAILS ===');
-  console.error('Error object:', err);
-  console.error('Error message:', err.message);
-  console.error('API_BASE value:', API_BASE);
-  console.error('URL that failed:', url);
-  console.error('Request method: POST');
-  console.error('Request headers:', { 'Content-Type': 'application/json' });
-  console.error('Request body:', JSON.stringify(form));
-  
-  setError(`Network error: ${err.message}. Check console for details.`);
-} finally {
+      
+      if (data.id) {
+        console.log('✅ Success! Profile created:');
+        console.log('Profile ID:', data.id);
+        console.log('Owner Token:', data.owner_token);
+        console.log('Redirecting to:', `/qr/${data.id}`);
+        
+        // Store owner token in localStorage if you need it later
+        if (data.owner_token) {
+          localStorage.setItem(`profile_${data.id}_token`, data.owner_token);
+        }
+        
+        // Navigate to QR page
+        navigate(`/qr/${data.id}`);
+      } else {
+        console.error('Invalid response format - missing id:', data);
+        setError('Invalid response from server.');
+      }
+      
+    } catch (err) {
+      console.error('=== NETWORK ERROR DETAILS ===');
+      console.error('Error object:', err);
+      console.error('Error message:', err.message);
+      console.error('Error name:', err.name);
+      console.error('API_BASE:', API_BASE);
+      console.error('URL attempted:', url);
+      console.error('Request method: POST');
+      console.error('Request headers:', { 'Content-Type': 'application/json' });
+      console.error('Request body:', JSON.stringify(form));
+      console.error('Browser URL:', window.location.href);
+      console.error('CORS Error? Check if backend allows origin:', window.location.origin);
+      
+      // User-friendly error message
+      if (err.message.includes('Failed to fetch')) {
+        setError(`Cannot connect to backend. Please verify:
+         • Backend URL: ${API_BASE}
+         • Backend is running
+         • CORS is configured properly`);
+      } else {
+        setError(`Network error: ${err.message}. Check console for details.`);
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -67,12 +124,13 @@ export default function UserForm() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Create your QR profile</h1>
+      
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-card p-6 sm:p-8 space-y-5"
       >
         {error && (
-          <div className="rounded-xl bg-red-50 text-red-700 px-4 py-3 text-sm">
+          <div className="rounded-xl bg-red-50 text-red-700 px-4 py-3 text-sm whitespace-pre-line">
             {error}
           </div>
         )}
@@ -91,7 +149,8 @@ export default function UserForm() {
               value={form.name}
               onChange={handleChange}
               placeholder="Your name"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              disabled={loading}
             />
           </div>
         </div>
@@ -109,7 +168,8 @@ export default function UserForm() {
               value={form.location}
               onChange={handleChange}
               placeholder="City or address"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              disabled={loading}
             />
           </div>
         </div>
@@ -127,7 +187,8 @@ export default function UserForm() {
               value={form.phone}
               onChange={handleChange}
               placeholder="+1 234 567 8900"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              disabled={loading}
             />
           </div>
         </div>
@@ -145,7 +206,8 @@ export default function UserForm() {
               value={form.whatsapp}
               onChange={handleChange}
               placeholder="Number with country code"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              disabled={loading}
             />
           </div>
         </div>
@@ -163,7 +225,8 @@ export default function UserForm() {
               value={form.bio}
               onChange={handleChange}
               placeholder="Short bio or description"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 resize-none"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"
+              disabled={loading}
             />
           </div>
         </div>
