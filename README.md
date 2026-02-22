@@ -2,7 +2,6 @@
 
 A modern digital business card generator that creates QR codes for instant profile sharing. Built with React, Express, and NeonDB.
 
-![Project Demo](https://via.placeholder.com/800x400.png?text=ScanMyQr+Demo)
 
 ## ✨ Features
 
