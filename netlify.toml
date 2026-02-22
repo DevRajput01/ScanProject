@@ -1,3 +1,5 @@
+
+netlify.toml
 [build]
   # If your site is in a subfolder, specify it here (otherwise comment out)
   base = "frontend"
