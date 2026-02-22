@@ -21,4 +21,11 @@
     "postcss": "^8.4.0"
   },
   "devDependencies": {}
+},
+{
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install --include=dev",
+  "framework": "vite"
 }
