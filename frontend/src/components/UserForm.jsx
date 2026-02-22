@@ -31,7 +31,7 @@ export default function UserForm() {
     }
     setLoading(true);
     try {
-      const url = API_BASE.startsWith('http') ? `${API_BASE}/profiles` : '/api/profiles';
+      const url = API_BASE.startsWith('http') ? `${API_BASE}/api/profiles` : '/api/profiles';
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
