@@ -1,5 +1,13 @@
 # ScanMyQr 📱
-# new
+# Restrobuilder
+## 🚧 Project Status
+⚠️ This project is currently in the **development phase**.  
+New features and improvements are being actively worked on.
+
+<img width="1366" height="837" alt="image" src="https://github.com/user-attachments/assets/d7d292ef-cd37-48a5-8c82-feb269f9380b" />
+<img width="1366" height="837" alt="image" src="https://github.com/user-attachments/assets/baca3f8b-49a7-40e6-904e-0305fe2eebec" />
+<img width="1366" height="653" alt="image" src="https://github.com/user-attachments/assets/b46530f6-7eb7-4c95-9e44-dfc6ee19a500" />
+<img width="1366" height="599" alt="image" src="https://github.com/user-attachments/assets/a445b22c-008d-431f-b358-e56a6e499c96" />
 
 
 A modern digital business card generator that creates QR codes for instant profile sharing. Built with React, Express, and NeonDB.
