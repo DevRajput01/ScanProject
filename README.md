@@ -1,5 +1,4 @@
 # ScanMyQr 📱
-# Restrobuilder
 ## 🚧 Project Status
 ⚠️ This project is currently in the **development phase**.  
 New features and improvements are being actively worked on.
